@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Memory Dashboard Card</title>
+  <style>
+    /* Base styles */
+    :root {
+      --stroke-0: #F2EDEE;
+      --fill-0: white;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, 
+        "Helvetica Neue", Arial, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: #f4f6f8;
+      padding: 1.5rem;
+    }
+
+    /* Container styles */
+    .memory-card-container {
+      width: 600px;
+      height: 260px;
+      position: relative;
+    }
+
+    .memory-card {
+      background-color: #ffffff;
+      overflow: hidden;
+      position: relative;
+      border-radius: 0.375rem;
+      box-shadow: 0px 4px 4px 0px rgba(0,0,0,0.25);
+      width: 100%;
+      height: 100%;
+    }
+
+    .absolute {
+      position: absolute;
+    }
+
+    /* Typography styles */
+    .css-ab7z1s, .css-shvt1q, .css-lamiph, .css-p9rx0t, .css-rotcai {
+      white-space: nowrap;
+      text-align: left;
+    }
+
+    .css-997ssv {
+      white-space: nowrap;
+      text-align: right;
+    }
+
+    /* Animation styles */
+    @keyframes pulse-glow {
+      0% {
+        filter: drop-shadow(0 0 1px rgba(249, 206, 132, 0.2));
+      }
+      50% {
+        filter: drop-shadow(0 0 2px rgba(249, 206, 132, 0.5));
+      }
+      100% {
+        filter: drop-shadow(0 0 1px rgba(249, 206, 132, 0.2));
+      }
+    }
+
+    .animate-pulse-glow {
+      animation: pulse-glow 3s infinite ease-in-out;
+    }
+
+    .transition-all {
+      transition-property: all;
+    }
+
+    .duration-100 {
+      transition-duration: 100ms;
+    }
+
+    .ease-out {
+      transition-timing-function: ease-out;
+    }
+
+    .transition-transform {
+      transition-property: transform;
+    }
+
+    .duration-300 {
+      transition-duration: 300ms;
+    }
+
+    .ease-in-out {
+      transition-timing-function: ease-in-out;
+    }
+
+    /* Helper classes */
+    .block {
+      display: block;
+    }
+
+    .size-full {
+      width: 100%;
+      height: 100%;
+    }
+
+    .size-1 {
+      width: 0.25rem;
+      height: 0.25rem;
+    }
+
+    .size-2 {
+      width: 0.5rem;
+      height: 0.5rem;
+    }
+
+    .contents {
+      display: contents;
+    }
+
+    .z-10 {
+      z-index: 10;
+    }
+
+    .cursor-pointer {
+      cursor: pointer;
+    }
+
+    .flex {
+      display: flex;
+    }
+
+    .items-center {
+      align-items: center;
+    }
+
+    .justify-start {
+      justify-content: flex-start;
+    }
+    
+    .justify-between {
+      justify-content: space-between;  
+    }
+
+    .gap-3 {
+      gap: 0.75rem;
+    }
+
+    .gap-1\.5 {
+      gap: 0.375rem;
+    }
+
+    .shrink-0 {
+      flex-shrink: 0;
+    }
+
+    .rounded-md {
+      border-radius: 0.375rem;
+    }
+
+    .rounded-sm {
+      border-radius: 0.25rem;
+    }
+
+    .rounded-bl-\[8px\] {
+      border-bottom-left-radius: 8px;
+    }
+
+    .rounded-tl-\[8px\] {
+      border-top-left-radius: 8px;
+    }
+
+    .rounded-br-\[8px\] {
+      border-bottom-right-radius: 8px;
+    }
+
+    .rounded-tr-\[8px\] {
+      border-top-right-radius: 8px;
+    }
+
+    .leading-tight {
+      line-height: 1.25;
+    }
+
+    .leading-normal {
+      line-height: normal;
+    }
+
+    .whitespace-pre {
+      white-space: pre;
+    }
+
+    .box-border {
+      box-sizing: border-box;
+    }
+
+    .translate-x-\[-100\%\] {
+      transform: translateX(-100%);
+    }
+    
+    .px-3 {
+      padding-left: 0.75rem;
+      padding-right: 0.75rem;
+    }
+    
+    .py-2 {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+    
+    .shadow-md {
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+    
+    .w-\[89px\] {
+      width: 89px;
+    }
+    
+    .left-1\/2 {
+      left: 50%;
+    }
+    
+    .bottom-0 {
+      bottom: 0;
+    }
+    
+    .-translate-x-1\/2 {
+      transform: translateX(-50%);
+    }
+    
+    .translate-y-full {
+      transform: translateY(100%);
+    }
+
+    /* Specific component styles */
+    .memory-title {
+      position: absolute;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: bold;
+      line-height: 0;
+      left: 21px;
+      color: #323b4b;
+      font-size: 20px;
+      text-align: left;
+      white-space: nowrap;
+      top: 38px;
+    }
+
+    .progress-background {
+      position: absolute;
+      background-color: #90e1ae;
+      height: 11px;
+      left: 422px;
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+      top: 5rem;
+      width: 148px;
+    }
+
+    .wired-segment {
+      position: absolute;
+      background-color: rgba(255,225,105,0.5);
+      height: 11px;
+      left: 39px;
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+      top: 5rem;
+      width: 383px;
+    }
+
+    .used-memory {
+      position: absolute;
+      font-family: 'Inter', sans-serif;
+      font-weight: normal;
+      line-height: 0;
+      left: 185px;
+      font-style: normal;
+      color: #384052;
+      font-size: 10px;
+      text-align: left;
+      top: 68px;
+      width: 4rem;
+    }
+
+    .free-memory {
+      position: absolute;
+      font-family: 'Inter', sans-serif;
+      font-weight: normal;
+      line-height: 0;
+      left: 480px;
+      font-style: normal;
+      color: #384052;
+      font-size: 10px;
+      text-align: left;
+      top: 68px;
+      width: 62px;
+    }
+
+    .pressure-label {
+      position: absolute;
+      font-family: 'Inter', sans-serif;
+      font-weight: normal;
+      line-height: 0;
+      left: 23px;
+      font-style: normal;
+      color: #384052;
+      font-size: 10px;
+      text-align: left;
+      white-space: nowrap;
+      top: 105px;
+    }
+
+    .percent-100 {
+      position: absolute;
+      font-family: 'Inter', sans-serif;
+      font-weight: bold;
+      height: 9px;
+      line-height: 0;
+      left: 39px;
+      font-style: normal;
+      color: #999999;
+      font-size: 6px;
+      text-align: right;
+      top: 123px;
+      transform: translateX(-100%);
+      width: 1.25rem;
+    }
+
+    .percent-0 {
+      position: absolute;
+      font-family: 'Inter', sans-serif;
+      font-weight: bold;
+      height: 9px;
+      line-height: 0;
+      left: 39px;
+      font-style: normal;
+      color: #999999;
+      font-size: 6px;
+      text-align: right;
+      top: 228px;
+      transform: translateX(-100%);
+      width: 11px;
+    }
+
+    .percent-50 {
+      position: absolute;
+      font-family: 'Inter', sans-serif;
+      font-weight: bold;
+      height: 9px;
+      line-height: 0;
+      left: 39px;
+      font-style: normal;
+      color: #999999;
+      font-size: 6px;
+      text-align: right;
+      top: 177px;
+      transform: translateX(-100%);
+      width: 1rem;
+    }
+
+    .time-label {
+      position: absolute;
+      font-family: 'Inter', sans-serif;
+      font-weight: bold;
+      height: 9px;
+      line-height: 0;
+      font-style: normal;
+      color: #999999;
+      font-size: 6px;
+      text-align: right;
+      top: 237px;
+      transform: translateX(-100%);
+      width: 33px;
+    }
+
+    .event-header {
+      position: absolute;
+      background-color: #38739e;
+      height: 21px;
+      left: 0;
+      overflow: hidden;
+      top: 0;
+      width: 600px;
+    }
+
+    .card-title {
+      position: absolute;
+      font-family: 'Inter', sans-serif;
+      font-weight: bold;
+      line-height: 0;
+      left: 257px;
+      font-style: normal;
+      color: #dedede;
+      font-size: 12px;
+      text-align: left;
+      white-space: nowrap;
+      top: 3px;
+    }
+
+    .dot {
+      position: absolute;
+      background-color: #ffffff;
+      border-radius: 0.25rem;
+      width: 0.25rem;
+      height: 0.25rem;
+      top: 9px;
+    }
+
+    .dot-1 {
+      left: 569px;
+    }
+
+    .dot-2 {
+      left: 576px;
+    }
+
+    .dot-3 {
+      left: 583px;
+    }
+
+    .legend-container {
+      position: absolute;
+      left: 481px;
+      top: 43px;
+    }
+
+    .legend-box {
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 0.75rem;
+      position: relative;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+    }
+
+    .used-dot {
+      background-color: rgba(255,225,105,0.5);
+      border-radius: 0.375rem;
+      flex-shrink: 0;
+      width: 0.5rem;
+      height: 0.5rem;
+    }
+
+    .free-dot {
+      background-color: rgba(8,209,16,0.5);
+      border-radius: 0.375rem;
+      flex-shrink: 0;
+      width: 0.5rem;
+      height: 0.5rem;
+    }
+
+    .legend-text {
+      font-family: 'Inter', sans-serif;
+      font-weight: normal;
+      font-style: normal;
+      color: #384052;
+      font-size: 8px;
+    }
+
+    .curve-container {
+      position: absolute;
+      height: 1.5rem;
+      left: 3rem;
+      top: 149px;
+      width: 519px;
+      cursor: pointer;
+    }
+
+    .curve-wrapper {
+      position: absolute;
+      bottom: -56.249%;
+      left: -2.216%;
+      right: -2.216%;
+      top: -39.583%;
+      transform-origin: center;
+    }
+
+    .horizontal-line {
+      position: absolute;
+      height: 0;
+      width: 523px;
+    }
+
+    .horizontal-line-inner {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      top: -1px;
+    }
+
+    .custom-tooltip {
+      position: absolute;
+      z-index: 10;
+      transition: all 100ms ease-out;
+      display: none;
+    }
+    
+    .tooltip-content {
+      background-color: white;
+      border-radius: 0.375rem;
+      padding: 0.5rem 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 89px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      position: relative;
+    }
+    
+    .tooltip-arrow {
+      position: absolute;
+      left: 50%;
+      bottom: 0;
+      transform: translateX(-50%) translateY(100%);
+      width: 0;
+      height: 0;
+      border-left: 6px solid transparent;
+      border-right: 6px solid transparent;
+      border-top: 6px solid white;
+    }
+    
+    .tooltip-time {
+      font-family: 'Poppins', sans-serif;
+      font-weight: normal;
+      font-style: normal;
+      color: #979699;
+      font-size: 13px;
+    }
+    
+    .tooltip-percent {
+      font-family: 'Poppins', sans-serif;
+      font-weight: 500;
+      font-style: normal;
+      color: #404040;
+      font-size: 13px;
+    }
+  </style>
+</head>
+<body>
+  <div class="memory-card-container">
+    <div class="memory-card" data-name="Memory Card">
+      <div class="memory-title">
+        <p class="block leading-normal whitespace-pre">MEMORY</p>
+      </div>
+      
+      <div class="progress-background" data-name="Progress Background"></div>
+      <div class="wired-segment" data-name="Wired Segment"></div>
+      
+      <div class="used-memory">
+        <p class="block leading-normal">5.44 GB</p>
+      </div>
+      <div class="free-memory">
+        <p class="block leading-normal">2.4 GB</p>
+      </div>
+      
+      <div class="pressure-label">
+        <p class="block leading-normal whitespace-pre">Pressure</p>
+      </div>
+      
+      <div class="percent-100">
+        <p class="block leading-normal">100%</p>
+      </div>
+      <div class="percent-0">
+        <p class="block leading-normal">0%</p>
+      </div>
+      <div class="percent-50">
+        <p class="block leading-normal">50%</p>
+      </div>
+      
+      <div class="time-label" style="left: 566px;">
+        <p class="block leading-normal">10:00AM</p>
+      </div>
+      <div class="time-label" style="left: 518px;">
+        <p class="block leading-normal">9:59AM</p>
+      </div>
+      <div class="time-label" style="left: 469px;">
+        <p class="block leading-normal">9:58AM</p>
+      </div>
+      <div class="time-label" style="left: 420px;">
+        <p class="block leading-normal">9:55AM</p>
+      </div>
+      <div class="time-label" style="left: 368px;">
+        <p class="block leading-normal">9:50AM</p>
+      </div>
+      <div class="time-label" style="left: 321px;">
+        <p class="block leading-normal">9:35AM</p>
+      </div>
+      <div class="time-label" style="left: 272px;">
+        <p class="block leading-normal">9:20AM</p>
+      </div>
+      <div class="time-label" style="left: 223px;">
+        <p class="block leading-normal">9:05AM</p>
+      </div>
+      <div class="time-label" style="left: 173px;">
+        <p class="block leading-normal">8:50AM</p>
+      </div>
+      <div class="time-label" style="left: 126px;">
+        <p class="block leading-normal">8:35AM</p>
+      </div>
+      <div class="time-label" style="left: 80px;">
+        <p class="block leading-normal">8:20AM</p>
+      </div>
+      
+      <!-- Legend -->
+      <div class="legend-container">
+        <div class="legend-box">
+          <div class="legend-item">
+            <div class="used-dot" data-name="Used Dot"></div>
+            <div class="legend-text">
+              <p class="leading-tight">Used</p>
+            </div>
+          </div>
+          <div class="legend-item">
+            <div class="free-dot" data-name="Free Dot"></div>
+            <div class="legend-text">
+              <p class="leading-tight">Free</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Event Header -->
+      <div class="event-header" data-name="EventHeader">
+        <div class="card-title">
+          <p class="block leading-normal whitespace-pre">Large Card</p>
+        </div>
+        <div class="dot dot-1" data-name="Dot 1"></div>
+        <div class="dot dot-2" data-name="Dot 2"></div>
+        <div class="dot dot-3" data-name="Dot 3"></div>
+      </div>
+      
+      <!-- Curve with subtle glow -->
+      <div id="curveContainer" class="curve-container">
+        <div id="curveWrapper" class="curve-wrapper transition-transform duration-300 ease-in-out">
+          <svg class="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 543 48">
+            <defs>
+              <!-- Enhanced glow filter -->
+              <filter id="enhancedGlow" x="-10%" y="-40%" width="120%" height="180%">
+                <feGaussianBlur stdDeviation="2" result="blur" />
+                <feFlood floodColor="#F9CE84" floodOpacity="0.4" result="glowColor">
+                  <animate attributeName="flood-opacity" values="0.3;0.5;0.3" dur="3s" repeatCount="indefinite" />
+                </feFlood>
+                <feComposite in="glowColor" in2="blur" operator="in" result="softGlow" />
+                <feMerge>
+                  <feMergeNode in="softGlow" />
+                  <feMergeNode in="SourceGraphic" />
+                </feMerge>
+              </filter>
+            </defs>
+            
+            <!-- Wider glow path -->
+            <path id="glowPath"
+              d="M12 25C42.5 39 63 23 146 21C229 19 224 28 322 10C420 -8 531 10 531 10"
+              stroke="#F9CE84"
+              stroke-linecap="round"
+              stroke-width="4"
+              opacity="0.3"
+              filter="url(#enhancedGlow)"
+            />
+            
+            <!-- Main path -->
+            <path id="mainPath"
+              d="M12 25C42.5 39 63 23 146 21C229 19 224 28 322 10C420 -8 531 10 531 10"
+              stroke="#F9CE84"
+              stroke-linecap="round"
+              stroke-width="3"
+              class="animate-pulse-glow"
+            />
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Horizontal lines -->
+      <div class="horizontal-line" style="left: 46px; top: 183px;">
+        <div class="horizontal-line-inner">
+          <svg class="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 523 1">
+            <line id="Line 13" stroke="#F2EDEE" stroke-linecap="round" x1="0.5" x2="522.5" y1="0.5" y2="0.5" />
+          </svg>
+        </div>
+      </div>
+      <div class="horizontal-line" style="left: 47px; top: 183px;">
+        <div class="horizontal-line-inner">
+          <svg class="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 523 1">
+            <line id="Line 13" stroke="#F2EDEE" stroke-linecap="round" x1="0.5" x2="522.5" y1="0.5" y2="0.5" />
+          </svg>
+        </div>
+      </div>
+      <div class="horizontal-line" style="left: 47px; top: 130px;">
+        <div class="horizontal-line-inner">
+          <svg class="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 523 1">
+            <line id="Line 13" stroke="#F2EDEE" stroke-linecap="round" x1="0.5" x2="522.5" y1="0.5" y2="0.5" />
+          </svg>
+        </div>
+      </div>
+      <div class="horizontal-line" style="left: 46px; top: 233px; width: 524px;">
+        <div class="horizontal-line-inner">
+          <svg class="block size-full" fill="none" preserveAspectRatio="none" viewBox="0 0 524 1">
+            <line id="Line 14" stroke="#F2EDEE" stroke-linecap="round" x1="0.5" x2="523.5" y1="0.5" y2="0.5" />
+          </svg>
+        </div>
+      </div>
+      
+      <!-- Custom HTML/CSS Tooltip -->
+      <div id="customTooltip" class="custom-tooltip">
+        <div class="tooltip-content">
+          <div class="tooltip-time">9:51AM</div>
+          <div class="tooltip-percent">75%</div>
+          <div class="tooltip-arrow"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Main JavaScript for interactivity and animations
+    document.addEventListener('DOMContentLoaded', function() {
+      // DOM elements
+      const curveContainer = document.getElementById('curveContainer');
+      const curveWrapper = document.getElementById('curveWrapper');
+      const customTooltip = document.getElementById('customTooltip');
+      
+      // Animation states
+      let breathingScale = 1.0;
+      
+      // References
+      let animationRef = null;
+      
+      // Previous position for tooltip smoothing
+      let prevPosition = { x: 308, y: 150 };
+      
+      // Points along the curve to help calculate tooltip position
+      const curvePoints = [
+        { x: 12, y: 25 },   // Start point
+        { x: 63, y: 33 },
+        { x: 146, y: 21 },
+        { x: 224, y: 28 },
+        { x: 322, y: 10 },  // Top/peak point
+        { x: 419, y: 31 },
+        { x: 531, y: 10 }   // End point
+      ];
+      
+      // Simple breathing animation
+      function startBreathingAnimation() {
+        let startTime;
+        
+        function animate(timestamp) {
+          if (!startTime) startTime = timestamp;
+          const elapsedTime = timestamp - startTime;
+          
+          // Simple sine wave breathing with reduced scale range (0.98-1.02)
+          const scale = 1.0 + 0.02 * Math.sin(elapsedTime / 1000);
+          breathingScale = scale;
+          
+          // Apply transform
+          curveWrapper.style.transform = `scale(${scale})`;
+          
+          animationRef = requestAnimationFrame(animate);
+        }
+        
+        animationRef = requestAnimationFrame(animate);
+      }
+      
+      // Start breathing animation
+      startBreathingAnimation();
+      
+      // Find the nearest point on the curve for a given x position
+      function findCurveYAtPosition(x) {
+        let prevPoint = curvePoints[0];
+        let nextPoint = curvePoints[curvePoints.length - 1];
+        
+        for (let i = 0; i < curvePoints.length - 1; i++) {
+          if (x >= curvePoints[i].x && x <= curvePoints[i+1].x) {
+            prevPoint = curvePoints[i];
+            nextPoint = curvePoints[i+1];
+            break;
+          }
+        }
+        
+        const ratio = (x - prevPoint.x) / (nextPoint.x - prevPoint.x);
+        return prevPoint.y + ratio * (nextPoint.y - prevPoint.y);
+      }
+      
+      // Event handlers
+      curveContainer.addEventListener('mousemove', function(e) {
+        // Calculate position relative to the curve container
+        const rect = curveContainer.getBoundingClientRect();
+        const x = e.clientX - rect.left;
+        
+        if (x >= 0 && x <= rect.width) {
+          // Convert to SVG coordinate space for the curve
+          const svgX = (x * 543) / 519;
+          
+          // Get Y position on the curve
+          const curveY = findCurveYAtPosition(svgX);
+          
+          // Convert back to page coordinates
+          const containerTop = 149;
+          const curveYInPage = containerTop + ((curveY * 24) / 48);
+          
+          // Smooth transition between previous and new positions
+          const smoothX = prevPosition.x * 0.7 + (x - 45) * 0.3;
+          const smoothY = prevPosition.y * 0.7 + (curveYInPage - 50) * 0.3;
+          
+          // Show and position tooltip
+          customTooltip.style.display = 'block';
+          customTooltip.style.left = `${Math.max(45, Math.min(smoothX, 480))}px`;
+          customTooltip.style.top = `${smoothY}px`;
+          
+          prevPosition = { x: smoothX, y: smoothY };
+        } else {
+          // Hide tooltip
+          customTooltip.style.display = 'none';
+        }
+      });
+      
+      curveContainer.addEventListener('mouseleave', function() {
+        // Hide tooltip
+        customTooltip.style.display = 'none';
+      });
+      
+      // Clean up on page unload
+      window.addEventListener('beforeunload', function() {
+        if (animationRef) cancelAnimationFrame(animationRef);
+      });
+    });
+  </script>
+</body>
+</html>

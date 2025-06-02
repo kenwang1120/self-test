@@ -1,0 +1,51 @@
+:root {
+  --stroke-0: #F2EDEE;
+  --fill-0: white;
+}
+
+.css-ab7z1s {
+  white-space: nowrap;
+  text-align: left;
+}
+
+.css-shvt1q {
+  white-space: nowrap;
+  text-align: left;
+}
+
+.css-997ssv {
+  white-space: nowrap;
+  text-align: right;
+}
+
+.css-lamiph {
+  white-space: nowrap;
+  text-align: left;
+}
+
+.css-p9rx0t {
+  white-space: nowrap;
+  text-align: left;
+}
+
+.css-rotcai {
+  white-space: nowrap;
+  text-align: left;
+}
+
+/* Subtle glow animation */
+@keyframes pulse-glow {
+  0% {
+    filter: drop-shadow(0 0 1px rgba(249, 206, 132, 0.2));
+  }
+  50% {
+    filter: drop-shadow(0 0 2px rgba(249, 206, 132, 0.5));
+  }
+  100% {
+    filter: drop-shadow(0 0 1px rgba(249, 206, 132, 0.2));
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 3s infinite ease-in-out;
+}
